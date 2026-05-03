@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brickk · Pay Invoice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,400..700&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#0c0a09;
+    --ink-2:#13110f;
+    --ink-3:#1c1917;
+    --line:rgba(245,245,244,.08);
+    --line-2:rgba(245,245,244,.14);
+    --bone:#fafaf9;
+    --mute:#a8a29e;
+    --mute-2:#78716c;
+    --rust:#d6481b;
+    --rust-2:#ec6b3a;
+    --green:#65a30d;
+    --r:11px;
+  }
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{
+    background:var(--ink);
+    color:var(--bone);
+    font-family:"Inter Tight",system-ui,sans-serif;
+    font-feature-settings:"ss01","cv11";
+    line-height:1.5;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  ::selection{background:var(--rust);color:#fff}
+  a{color:inherit;text-decoration:none}
+
+  /* ── nav ── */
+  header.nav{
+    border-bottom:1px solid var(--line);
+    background:rgba(12,10,9,.78);
+    backdrop-filter:saturate(140%) blur(14px);
+    -webkit-backdrop-filter:saturate(140%) blur(14px);
+  }
+  .nav-row{
+    width:min(1320px,100% - 48px);
+    margin-inline:auto;
+    display:flex;align-items:center;justify-content:space-between;
+    height:68px;
+  }
+  .wordmark{
+    display:inline-flex;align-items:baseline;gap:6px;
+    font-family:"Fraunces",serif;
+    font-weight:600;font-size:23px;
+    letter-spacing:-.02em;font-style:italic;
+  }
+  .wordmark .b{font-style:normal;color:var(--rust-2)}
+  .wordmark .dot{
+    width:6px;height:6px;border-radius:2px;
+    background:var(--rust);display:inline-block;
+    transform:translateY(-2px);
+  }
+  .nav-back{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--mute);
+    display:flex;align-items:center;gap:8px;
+    transition:color .18s;
+  }
+  .nav-back:hover{color:var(--bone)}
+
+  /* ── page layout ── */
+  main{
+    flex:1;
+    display:flex;align-items:center;justify-content:center;
+    padding:80px 24px;
+  }
+
+  /* ── payment card ── */
+  .pay-card{
+    width:100%;max-width:480px;
+  }
+  .pay-header{
+    margin-bottom:40px;
+  }
+  .pay-label{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--rust-2);
+    margin-bottom:12px;
+  }
+  .pay-header h1{
+    font-family:"Fraunces",serif;
+    font-weight:380;font-size:36px;
+    letter-spacing:-.02em;line-height:1.05;
+  }
+  .pay-header h1 em{font-style:italic;color:var(--mute)}
+
+  /* ── client ID box ── */
+  .client-id-box{
+    border:1px solid var(--rust);
+    border-radius:var(--r);
+    padding:20px 22px;
+    background:rgba(214,72,27,.05);
+    margin-bottom:28px;
+  }
+  .client-id-box .box-label{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--rust-2);
+    margin-bottom:8px;
+  }
+  .client-id-box input{
+    width:100%;
+    background:transparent;
+    border:none;
+    outline:none;
+    font-family:"Fraunces",serif;
+    font-size:26px;
+    font-style:italic;
+    letter-spacing:-.01em;
+    color:var(--bone);
+    caret-color:var(--rust-2);
+  }
+  .client-id-box input::placeholder{
+    color:var(--mute-2);
+  }
+
+  /* ── card form ── */
+  .card-form{
+    border:1px solid var(--line);
+    border-radius:var(--r);
+    background:var(--ink-2);
+    overflow:hidden;
+    margin-bottom:20px;
+  }
+  .card-form-header{
+    padding:14px 20px;
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .card-form-header span{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--mute);
+  }
+  .card-icons{
+    display:flex;gap:6px;align-items:center;
+  }
+  .card-icons .ci{
+    font-family:"JetBrains Mono",monospace;
+    font-size:9px;letter-spacing:.1em;
+    color:var(--mute-2);
+    border:1px solid var(--line);
+    padding:3px 7px;border-radius:3px;
+    text-transform:uppercase;
+  }
+
+  .field-row{
+    padding:0 20px;
+    border-bottom:1px solid var(--line);
+  }
+  .field-row:last-child{border-bottom:none}
+  .field-row label{
+    display:block;
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--mute-2);
+    padding-top:14px;
+  }
+  .field-row input{
+    display:block;
+    width:100%;
+    background:transparent;
+    border:none;
+    outline:none;
+    padding:8px 0 14px;
+    font-family:"Inter Tight",sans-serif;
+    font-size:15px;
+    font-weight:400;
+    color:var(--bone);
+    caret-color:var(--rust-2);
+  }
+  .field-row input::placeholder{color:var(--mute-2)}
+  .field-split{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  .field-split .field-row:first-child{
+    border-right:1px solid var(--line);
+  }
+
+  /* ── submit ── */
+  .pay-btn{
+    width:100%;
+    padding:16px;
+    background:var(--rust);
+    color:#fff;
+    border:none;
+    border-radius:9px;
+    font-family:"Inter Tight",sans-serif;
+    font-size:15px;
+    font-weight:500;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;
+    transition:background .2s;
+    letter-spacing:.01em;
+  }
+  .pay-btn:hover{background:var(--rust-2)}
+  .pay-btn:disabled{
+    background:var(--mute-2);
+    cursor:not-allowed;
+  }
+  .pay-btn .arr{font-size:16px}
+
+  /* ── error / status ── */
+  .status{
+    margin-top:14px;
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;letter-spacing:.06em;
+    color:var(--mute);
+    text-align:center;
+    min-height:18px;
+  }
+  .status.error{color:#f87171}
+  .status.loading{color:var(--rust-2)}
+
+  /* ── secure note ── */
+  .secure-note{
+    margin-top:24px;
+    text-align:center;
+    font-family:"JetBrains Mono",monospace;
+    font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--mute-2);
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .secure-note::before{
+    content:"";
+    width:8px;height:8px;border-radius:50%;
+    background:var(--green);
+    flex-shrink:0;
+  }
+
+  @media(max-width:520px){
+    .pay-header h1{font-size:28px}
+    .client-id-box input{font-size:20px}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-row">
+    <a href="index.html" class="wordmark"><span class="b">brickk</span><span class="dot"></span></a>
+    <a href="index.html" class="nav-back">← Back to site</a>
+  </div>
+</header>
+
+<main>
+  <div class="pay-card">
+
+    <div class="pay-header">
+      <div class="pay-label">Invoice payment</div>
+      <h1>Pay your <em>invoice.</em></h1>
+    </div>
+
+    <div class="client-id-box">
+      <div class="box-label">Client ID</div>
+      <input
+        type="text"
+        id="client-id"
+        placeholder="e.g. BRK-0042"
+        autocomplete="off"
+        spellcheck="false"
+      >
+    </div>
+
+    <div class="card-form">
+      <div class="card-form-header">
+        <span>Card details</span>
+        <div class="card-icons">
+          <span class="ci">Visa</span>
+          <span class="ci">MC</span>
+          <span class="ci">Amex</span>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <label for="card-name">Name on card</label>
+        <input type="text" id="card-name" placeholder="Jane Smith" autocomplete="cc-name">
+      </div>
+
+      <div class="field-row">
+        <label for="card-number">Card number</label>
+        <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" inputmode="numeric">
+      </div>
+
+      <div class="field-split">
+        <div class="field-row">
+          <label for="card-expiry">Expiry</label>
+          <input type="text" id="card-expiry" placeholder="MM / YY" maxlength="7" autocomplete="cc-exp" inputmode="numeric">
+        </div>
+        <div class="field-row">
+          <label for="card-cvc">CVC</label>
+          <input type="text" id="card-cvc" placeholder="•••" maxlength="4" autocomplete="cc-csc" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+
+    <button class="pay-btn" id="pay-btn" disabled>
+      <span>Proceed to payment</span>
+      <span class="arr">→</span>
+    </button>
+
+    <div class="status" id="status"></div>
+
+    <div class="secure-note">Secured by Shopify Payments</div>
+
+  </div>
+</main>
+
+<script>
+  // ── Shopify config ──────────────────────────────────────────────
+  // TODO: Replace these with your Shopify store values
+  const SHOPIFY_DOMAIN      = 'YOUR-STORE.myshopify.com';
+  const STOREFRONT_TOKEN    = 'YOUR_STOREFRONT_ACCESS_TOKEN';
+  const VARIANT_ID          = 'gid://shopify/ProductVariant/YOUR_VARIANT_ID';
+  // ───────────────────────────────────────────────────────────────
+
+  const clientIdInput = document.getElementById('client-id');
+  const payBtn        = document.getElementById('pay-btn');
+  const statusEl      = document.getElementById('status');
+
+  // Enable pay button only when Client ID is filled
+  clientIdInput.addEventListener('input', () => {
+    payBtn.disabled = clientIdInput.value.trim().length === 0;
+  });
+
+  // Card number formatting
+  document.getElementById('card-number').addEventListener('input', (e) => {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 16);
+    e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+  });
+
+  // Expiry formatting
+  document.getElementById('card-expiry').addEventListener('input', (e) => {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+    if (v.length >= 3) v = v.slice(0, 2) + ' / ' + v.slice(2);
+    e.target.value = v;
+  });
+
+  // Pay button click — creates Shopify checkout with Client ID as attribute
+  payBtn.addEventListener('click', async () => {
+    const clientId = clientIdInput.value.trim();
+    if (!clientId) return;
+
+    payBtn.disabled = true;
+    statusEl.textContent = 'Creating secure checkout...';
+    statusEl.className = 'status loading';
+
+    const mutation = `
+      mutation checkoutCreate($input: CheckoutCreateInput!) {
+        checkoutCreate(input: $input) {
+          checkout { id webUrl }
+          checkoutUserErrors { code field message }
+        }
+      }
+    `;
+
+    const variables = {
+      input: {
+        lineItems: [{ variantId: VARIANT_ID, quantity: 1 }],
+        customAttributes: [{ key: 'Client ID', value: clientId }],
+        note: 'Client ID: ' + clientId,
+      }
+    };
+
+    try {
+      const res = await fetch(`https://${SHOPIFY_DOMAIN}/api/2024-01/graphql.json`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN,
+        },
+        body: JSON.stringify({ query: mutation, variables }),
+      });
+
+      const { data } = await res.json();
+      const errors = data?.checkoutCreate?.checkoutUserErrors;
+
+      if (errors && errors.length > 0) {
+        throw new Error(errors[0].message);
+      }
+
+      const url = data?.checkoutCreate?.checkout?.webUrl;
+      if (!url) throw new Error('Could not create checkout. Please try again.');
+
+      statusEl.textContent = 'Redirecting to secure payment...';
+      window.location.href = url;
+
+    } catch (err) {
+      statusEl.textContent = err.message || 'Something went wrong. Please try again.';
+      statusEl.className = 'status error';
+      payBtn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
