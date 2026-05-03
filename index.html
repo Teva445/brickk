@@ -586,8 +586,16 @@
     border-bottom:1px solid var(--line);
     position:relative;
   }
-  .step:nth-child(3n){border-right:none}
   .step:nth-last-child(-n+3){border-bottom:none}
+  .step:last-child{
+    grid-column:3;
+    grid-row:1/span 2;
+    border-right:none;
+    border-bottom:none;
+    background:rgba(214,72,27,.03);
+    display:flex;flex-direction:column;justify-content:center;
+  }
+  .step:last-child h5{font-size:clamp(30px,2.8vw,44px)}
   .step-top{
     display:flex;justify-content:space-between;
     align-items:center;
@@ -1003,9 +1011,10 @@
   @media (max-width:1080px){
     .case-grid{grid-template-columns:1fr;gap:36px}
     .ind-grid{grid-template-columns:repeat(2,1fr)}
-    .doc-body{grid-template-columns:repeat(2,1fr)}
-    .step:nth-child(3n){border-right:1px solid var(--line)}
-    .step:nth-child(2n){border-right:none}
+    .doc-body{grid-template-columns:repeat(3,1fr)}
+    .step:last-child{grid-column:auto;grid-row:auto;background:none;display:block;border-right:none}
+    .step:last-child h5{font-size:24px}
+    .step:nth-child(3n){border-right:none}
     .step:nth-last-child(-n+3){border-bottom:1px solid var(--line)}
     .step:nth-last-child(-n+2){border-bottom:none}
     .quotes{grid-template-columns:1fr}
@@ -1025,7 +1034,7 @@
     .ind{border-right:none}
     .doc-body{grid-template-columns:1fr}
     .step{border-right:none !important;border-bottom:1px solid var(--line) !important}
-    .step:last-child{border-bottom:none !important}
+    .step:last-child{grid-column:auto !important;grid-row:auto !important;display:block !important;background:none !important;border-bottom:none !important}
     .case-numbers{grid-template-columns:1fr;gap:18px}
     .foot-grid{grid-template-columns:1fr}
   }
